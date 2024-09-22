@@ -3,9 +3,8 @@ const locationButton = document.querySelector(".location-button");
 const currentWeatherDiv = document.querySelector(".current-weather");
 const hourlyWeather = document.querySelector(".hourly-weather .weather-list");
 
-const API_KEY = "32d5e676dff647c999d223415242009"; // API key
+const API_KEY = "32d5e676dff647c999d223415242009"; 
 
-// Weather codes for mapping to custom icons
 const weatherCodes = {
   clear: [1000],
   clouds: [1003, 1006, 1009],
@@ -17,18 +16,18 @@ const weatherCodes = {
   thunder_rain: [1273, 1276],
 }
 
-// Display the hourly forecast for the next 24 hours
+
 const displayHourlyForecast = (hourlyData) => {
   const currentHour = new Date().setMinutes(0, 0, 0);
   const next24Hours = currentHour + 24 * 60 * 60 * 1000;
 
-  // Filter the hourly data to only include the next 24 hours
+
   const next24HoursData = hourlyData.filter(({ time }) => {
     const forecastTime = new Date(time).getTime();
     return forecastTime >= currentHour && forecastTime <= next24Hours;
   });
 
-  // Generate HTML for each hourly forecast and display it
+  
   hourlyWeather.innerHTML = next24HoursData.map((item) => {
     const temperature = Math.floor(item.temp_c);
     const time = item.time.split(' ')[1].substring(0, 5);
@@ -42,27 +41,27 @@ const displayHourlyForecast = (hourlyData) => {
   }).join('');
 };
 
-// Fetch and display weather details
+
 const getWeatherDetails = async (API_URL) => {
   window.innerWidth <= 768 && searchInput.blur();
   document.body.classList.remove("show-no-results");
 
   try {
-    // Fetch weather data from the API and parse the response as JSON
+    
     const response = await fetch(API_URL);
     const data = await response.json();
 
-    // Extract current weather details
+    
     const temperature = Math.floor(data.current.temp_c);
     const description = data.current.condition.text;
     const weatherIcon = Object.keys(weatherCodes).find(icon => weatherCodes[icon].includes(data.current.condition.code));
 
-    // Update the current weather display
+    
     currentWeatherDiv.querySelector(".weather-icon").src = `icons/${weatherIcon}.svg`;
     currentWeatherDiv.querySelector(".temperature").innerHTML = `${temperature}<span>°C</span>`;
     currentWeatherDiv.querySelector(".description").innerText = description;
 
-    // Combine hourly data from today and tomorrow
+  
     const combinedHourlyData = [...data.forecast?.forecastday[0]?.hour, ...data.forecast?.forecastday[1]?.hour];
 
     searchInput.value = data.location.name;
@@ -72,13 +71,12 @@ const getWeatherDetails = async (API_URL) => {
   }
 }
 
-// Set up the weather request for a specific city
+
 const setupWeatherRequest = (cityName) => {
   const API_URL = `https://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${cityName}&days=2`;
   getWeatherDetails(API_URL);
 }
 
-// Handle user input in the search box
 searchInput.addEventListener("keyup", (e) => {
   const cityName = searchInput.value.trim();
 
@@ -87,7 +85,7 @@ searchInput.addEventListener("keyup", (e) => {
   }
 });
 
-// Get user's coordinates and fetch weather data for the current location
+
 locationButton.addEventListener("click", () => {
   navigator.geolocation.getCurrentPosition(
     (position) => {
@@ -102,5 +100,5 @@ locationButton.addEventListener("click", () => {
   );
 });
 
-// Initial weather request for London as the default city
+
 setupWeatherRequest("London");
