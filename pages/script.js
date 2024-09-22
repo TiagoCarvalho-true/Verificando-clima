@@ -101,4 +101,5 @@ locationButton.addEventListener("click", () => {
 });
 
 
+
 setupWeatherRequest("London");
